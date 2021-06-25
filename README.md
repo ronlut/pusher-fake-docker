@@ -1,2 +1,2 @@
 # pusher-fake-docker
-Dockerized pusher-fake
+Dockerized [pusher-fake](https://github.com/tristandunn/pusher-fake)
