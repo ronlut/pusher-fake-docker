@@ -1,0 +1,34 @@
+name: build-and-push
+
+on:
+  push:
+    branches:
+      - 'master'
+      - 'test'
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    env:
+      PUSHER_FAKE_VERSION: "2.2.0"
+    steps:
+      -
+        name: Login to DockerHub
+        uses: docker/login-action@v1 
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      -
+        name: Build and push
+        id: docker_build
+        uses: docker/build-push-action@v2
+        with:
+          push: true
+          build-args: |
+            "PUSHER_FAKE_VERSION:$PUSHER_FAKE_VERSION"
+          tags: |
+            "ronlut/pusher-fake:latest"
+            "ronlut/pusher-fake:$PUSHER_FAKE_VERSION"
+      -
+        name: Image digest
+        run: echo ${{ steps.docker_build.outputs.digest }}
