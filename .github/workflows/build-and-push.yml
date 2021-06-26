@@ -5,13 +5,19 @@ on:
     branches:
       - 'master'
       - 'test'
+    tags:
+      - '*'
 
 jobs:
   docker:
     runs-on: ubuntu-latest
-    env:
-      PUSHER_FAKE_VERSION: "2.2.0"
     steps:
+      - 
+        name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v3
+        with:
+          images: ronlut/pusher-fake
       -
         name: Login to DockerHub
         uses: docker/login-action@v1 
@@ -24,11 +30,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
-          build-args: |
-            "PUSHER_FAKE_VERSION:$PUSHER_FAKE_VERSION"
-          tags: |
-            "ronlut/pusher-fake:latest"
-            "ronlut/pusher-fake:$PUSHER_FAKE_VERSION"
+          tags: ${{ steps.meta.outputs.tags }}
       -
         name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
